@@ -1,37 +1,14 @@
 import pandas as pd
-from pydantic import BaseModel
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import plot_tree
 
+from data_model import dadosPaciente
+
 df = pd.read_csv('./tables/TABELA_TCC.csv')
 rf = None
-
-class dadosPaciente(BaseModel):
-    OVA: int = 0
-    DISP: int = 80
-    FR: int = 0
-    CIA: int = 0
-    RAA1: int = 0
-    MVUA: int = 0
-    ROVA: int = 0
-    ER: int = 0
-    CAG: int = 0
-    RAA2: int = 0
-    MVPA1: int = 0
-    HEM: int = 0
-    SAT1: int = 0
-    TPEH: int = 0
-    MVPA2: int = 0
-    TP: int = 0
-    DGSI1: int = 0
-    SAT2: int = 0
-    COR: int = 0
-    DGSI2: int = 0
-    TS: int = 0
-    SG: int = 0
 
 def gerar_arvore():
     X = df.drop('RISCO',axis=1)
