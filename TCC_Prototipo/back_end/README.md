@@ -24,7 +24,7 @@ git clone https://github.com/OctaplusFinancialAnalytics/sandbox
 cd marcelo/fastapi-blog
 
 # execute o servidor no terminal
-uvicorn app:app
+uvicorn prot_random_forest:app
 
 # Na Web acesse o documento gerado http: // localhost: 8000 / docs
 ```
