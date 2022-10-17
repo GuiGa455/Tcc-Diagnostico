@@ -131,6 +131,7 @@
           class="footer-chip"
           color="red"
           style="margin-left: 90px"
+          x-large="true"
         >
           RED
         </v-chip>
@@ -139,7 +140,8 @@
           v-if="this.risco === 2"
           class="footer-chip"
           color="orange"
-          style="margin-left: 78px"
+          style="margin-left: 70px"
+          x-large="true"
         >
           ORANGE
         </v-chip>
@@ -148,7 +150,8 @@
           v-if="this.risco === 3"
           class="footer-chip"
           color="yellow"
-          style="margin-left: 80px"
+          style="margin-left: 70px"
+          x-large="true"
         >
           YELLOW
         </v-chip>
@@ -157,7 +160,8 @@
           v-if="this.risco === 4"
           class="footer-chip"
           color="green"
-          style="margin-left: 85px"
+          style="margin-left: 75px"
+          x-large="true"
         >
           GREEN
         </v-chip>
@@ -166,7 +170,8 @@
           v-if="this.risco === 5"
           class="footer-chip"
           color="blue"
-          style="margin-left: 87px"
+          style="margin-left: 85px"
+          x-large="true"
         >
           BLUE
         </v-chip>
