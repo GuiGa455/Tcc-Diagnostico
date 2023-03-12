@@ -36,6 +36,14 @@ model = {}
 df = pd.read_csv('./tables/TABELA_TCC.csv')
 rf = None
 
+def adicionar_paciente(data = dadosPaciente(), risco = 5):
+    data_dict = data.__dict__
+    values = list(data_dict.values())
+    values.append(risco)
+    df.loc[len(df)] = values
+    df.to_csv('./tables/TABELA_TCC.csv', index=False)
+    return 1
+
 def gerar_arvore():
     X = df.drop('RISCO',axis=1)
     y = df['RISCO']
@@ -151,3 +159,13 @@ def put_pre_classificacao():
 def put_pre_classificacao_fig():
     status = gerar_img()
     return status
+
+@app.post("/pre_classificacao/paciente")
+def get_pre_classificacao(
+    paciente: dadosPaciente, risco: int
+):
+    try:
+        status = adicionar_paciente(paciente, risco)
+        return status
+    except Exception as e:
+        return str(e)

@@ -18,31 +18,13 @@ python -m pip install requests
 
 ```
 # clonar repositório
-git clone https://github.com/OctaplusFinancialAnalytics/sandbox
 
-# entrar na pasta marcelo/fastapi-blog
-cd marcelo/fastapi-blog
+# entrar na pasta /Tcc-Manchester/TCC_Prototipo/back_end
 
 # execute o servidor no terminal
 uvicorn prot_random_forest:app
 
 # Na Web acesse o documento gerado http: // localhost: 8000 / docs
-```
-
-## Como executar os testes
-
-```
-# clonar repositório
-git clone https://github.com/OctaplusFinancialAnalytics/sandbox
-
-# entrar na pasta marcelo/fastapi-blog
-cd marcelo/fastapi-blog
-
-# Abrir o interpretador do python usando o comando python3 ou a versão python da sua máquina
-python3
-
-# No interpretador executar a linha de código abaixo
-exec(open('Test_Request.py').read())
 ```
 
 # Autor
