@@ -2,6 +2,7 @@ from logging import exception
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Union, Optional
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -36,11 +37,24 @@ model = {}
 df = pd.read_csv('./tables/TABELA_TCC.csv')
 rf = None
 
-def adicionar_paciente(data = dadosPaciente(), risco = 5):
+def adicionar_paciente(data = dadosPaciente(), risco = None):
+    if risco is None:
+        risco = analisar_risco(data)
+
     data_dict = data.__dict__
     values = list(data_dict.values())
     values.append(risco)
     df.loc[len(df)] = values
+    df.to_csv('./tables/TABELA_TCC.csv', index=False)
+    return 1
+
+def adicionar_sintoma(sintoma:str, default):
+    if default == True:
+        default = 1
+    if default == False:
+        default = 0
+
+    df.insert(0, sintoma.upper(), default)
     df.to_csv('./tables/TABELA_TCC.csv', index=False)
     return 1
 
@@ -55,9 +69,6 @@ def gerar_arvore():
     rf.fit(X_tr, y_tr)
 
 def gerar_img():
-    global rf
-    if rf is None:
-        return 0
     for x in range(len(rf.estimators_)):
         plt.figure(figsize=(75,20))
         plot_tree(rf.estimators_[x],filled=True)
@@ -89,9 +100,6 @@ def analisar_risco(data = dadosPaciente()):
     data.TS,
     data.SG,
     ]]
-    global rf
-    if rf is None:
-        return 0
     data = rf.predict(amostra)
     return int(data[0])
 
@@ -145,6 +153,9 @@ def get_pre_classificacao(
             TS=TS,
             SG=SG,
         )
+        global rf
+        if rf is None:
+            gerar_arvore()
         status = analisar_risco(data)
         return status
     except Exception as e:
@@ -162,10 +173,26 @@ def put_pre_classificacao_fig():
 
 @app.post("/pre_classificacao/paciente")
 def get_pre_classificacao(
-    paciente: dadosPaciente, risco: int
+    paciente: dadosPaciente, risco: int = None
 ):
     try:
+        global rf
+        if rf is None:
+            gerar_arvore()
         status = adicionar_paciente(paciente, risco)
+        return status
+    except Exception as e:
+        return str(e)
+    
+@app.post("/pre_classificacao/sintoma")
+def get_pre_classificacao(
+    sintoma: str, default: Union[int, bool]
+):
+    try:
+        global rf
+        if rf is None:
+            gerar_arvore()
+        status = adicionar_sintoma(sintoma, default)
         return status
     except Exception as e:
         return str(e)
