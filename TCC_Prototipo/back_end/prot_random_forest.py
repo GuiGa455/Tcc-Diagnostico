@@ -139,4 +139,8 @@ def get_pre_classificacao(
 @app.get("/pre_classificacao/read_sintomas")
 def get_sintomas():
     lista_sintomas = list(df.columns)
-    return lista_sintomas
+    default = list(df.loc[0])
+    paciente = {}
+    for i in range(len(lista_sintomas)):
+        paciente[lista_sintomas[i]] = default[i]
+    return paciente
