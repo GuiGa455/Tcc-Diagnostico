@@ -11,8 +11,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import plot_tree
 
-from data_model import dadosPaciente
-
 import json
 
 app = FastAPI()
@@ -37,12 +35,11 @@ model = {}
 df = pd.read_csv('./tables/TABELA_TCC.csv')
 rf = None
 
-def adicionar_paciente(data = dadosPaciente(), risco = None):
+def adicionar_paciente(data: dict, risco = None):
     if risco is None:
         risco = analisar_risco(data)
 
-    data_dict = data.__dict__
-    values = list(data_dict.values())
+    values = list(data.values())
     values.append(risco)
     df.loc[len(df)] = values
     df.to_csv('./tables/TABELA_TCC.csv', index=False)
@@ -75,84 +72,26 @@ def gerar_img():
         plt.savefig(f"./../../Anexos/figura_{x + 1}.jpg")
     return 1
 
-def analisar_risco(data = dadosPaciente()):
-    amostra = [[
-    data.OVA,
-    data.DISP,
-    data.FR,
-    data.CIA,
-    data.RAA1,
-    data.MVUA,
-    data.ROVA,
-    data.ER,
-    data.CAG,
-    data.RAA2,
-    data.MVPA1,
-    data.HEM,
-    data.SAT1,
-    data.TPEH,
-    data.MVPA2,
-    data.TP,
-    data.DGSI1,
-    data.SAT2,
-    data.COR,
-    data.DGSI2,
-    data.TS,
-    data.SG,
-    ]]
+def analisar_risco(data: dict):
+    if 'RISCO' in data:
+        data.pop('RISCO')
+
+    lista_sintomas = list(df.columns)
+    keys = list(data.keys())
+    if lista_sintomas != keys:
+        raise Exception("lista de sintomas fornecida incorretamente")
+    
+    values = list(data.values())
+    amostra = []
+    amostra.append(values)
     data = rf.predict(amostra)
     return int(data[0])
 
 @app.get("/pre_classificacao/read")
 def get_pre_classificacao(
-    OVA: int = 0,
-    DISP: int = 80,
-    FR: int = 0,
-    CIA: int = 0,
-    RAA1: int = 0,
-    MVUA: int = 0,
-    ROVA: int = 0,
-    ER: int = 0,
-    CAG: int = 0,
-    RAA2: int = 0,
-    MVPA1: int = 0,
-    HEM: int = 0,
-    SAT1: int = 0,
-    TPEH: int = 0,
-    MVPA2: int = 0,
-    TP: int = 0,
-    DGSI1: int = 0,
-    SAT2: int = 0,
-    COR: int = 0,
-    DGSI2: int = 0,
-    TS: int = 0,
-    SG: int = 0,
+    data: dict
 ):
     try:
-        data = dadosPaciente(
-            OVA=OVA,
-            DISP=DISP,
-            FR=FR,
-            CIA=CIA,
-            RAA1=RAA1,
-            MVUA=MVUA,
-            ROVA=ROVA,
-            ER=ER,
-            CAG=CAG,
-            RAA2=RAA2,
-            MVPA1=MVPA1,
-            HEM=HEM,
-            SAT1=SAT1,
-            TPEH=TPEH,
-            MVPA2=MVPA2,
-            TP=TP,
-            DGSI1=DGSI1,
-            SAT2=SAT2,
-            COR=COR,
-            DGSI2=DGSI2,
-            TS=TS,
-            SG=SG,
-        )
         global rf
         if rf is None:
             gerar_arvore()
@@ -173,7 +112,7 @@ def put_pre_classificacao_fig():
 
 @app.post("/pre_classificacao/paciente")
 def get_pre_classificacao(
-    paciente: dadosPaciente, risco: int = None
+    paciente: dict, risco: int = None
 ):
     try:
         global rf
@@ -196,3 +135,8 @@ def get_pre_classificacao(
         return status
     except Exception as e:
         return str(e)
+    
+@app.get("/pre_classificacao/read_sintomas")
+def get_sintomas():
+    lista_sintomas = list(df.columns)
+    return lista_sintomas
