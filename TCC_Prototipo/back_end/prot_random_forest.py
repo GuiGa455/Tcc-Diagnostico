@@ -77,6 +77,7 @@ def analisar_risco(data: dict):
         data.pop('RISCO')
 
     lista_sintomas = list(df.columns)
+    lista_sintomas.pop(-1)
     keys = list(data.keys())
     if lista_sintomas != keys:
         raise Exception("lista de sintomas fornecida incorretamente")
@@ -87,10 +88,8 @@ def analisar_risco(data: dict):
     data = rf.predict(amostra)
     return int(data[0])
 
-@app.get("/pre_classificacao/read")
-def get_pre_classificacao(
-    data: dict
-):
+@app.put("/pre_classificacao/read")
+def get_pre_classificacao(data: dict):
     try:
         global rf
         if rf is None:
@@ -136,7 +135,7 @@ def get_pre_classificacao(
     except Exception as e:
         return str(e)
     
-@app.get("/pre_classificacao/read_sintomas")
+@app.get("/pre_classificacao/paciente_default")
 def get_sintomas():
     lista_sintomas = list(df.columns)
     default = list(df.loc[0])
