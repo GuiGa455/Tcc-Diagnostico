@@ -178,6 +178,9 @@
 
         <br>
         <br>
+        <div style="margin-left: 22%; margin-top: 50%">
+        <doctor-view :customer="customizations" @rowClick="rowClick()"/>
+        </div>
       </v-list>
     </v-navigation-drawer>
 
@@ -194,7 +197,7 @@
             :key="key"
         >
           <v-form>
-            <div v-if="(customizations[key] !== false) && (customizations[key] !== true)">
+            <div v-if="((customizations[key] !== false) && (customizations[key] !== true)) && ((customizations[key] !== 0) && (customizations[key] !== 1))">
             <br>
                 {{ key }}
             <br>
@@ -229,11 +232,15 @@
 
 <script>
 import axios from 'axios'
+import DoctorView from "./../components/DoctorView.vue"
 
 let API_HOST = 'http://localhost'
 let API_PORT = '8000'
 
 export default {
+  components: {
+    DoctorView
+  },
   mounted () {
     this.putClassificacao()
     this.getPacienteDefault()
@@ -312,6 +319,10 @@ export default {
         if (response == 0) {
             console.log("Error ao carregar dados!")
         }
+    },
+    rowClick () {
+      this.putClassificacao()
+      this.getPacienteDefault()
     }
   }
 }
