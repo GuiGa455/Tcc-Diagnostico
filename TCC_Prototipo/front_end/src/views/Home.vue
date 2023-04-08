@@ -321,8 +321,7 @@ export default {
         }
     },
     rowClick () {
-      this.putClassificacao()
-      this.getPacienteDefault()
+      window.location.reload(true);
     }
   }
 }

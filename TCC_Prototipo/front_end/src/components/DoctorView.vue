@@ -56,6 +56,19 @@
             </v-btn-toggle>
           </div>
 
+          <div v-if="paciente">
+            <div class="mt-5 d-flex justify-center">
+              <v-text-field 
+                v-model="risco"
+                color="white" 
+                bg-color="white"
+                label="Informe aqui o risco adequado"
+                variant="underlined"
+              >
+              </v-text-field>
+            </div>
+          </div>
+
           <div class="pa-0 me-auto mt-10">
             Adicionar novo sintoma na plataforma:
           </div>
@@ -139,15 +152,22 @@ export default {
         dialog: false,
         paciente: false,
         sintoma: false,
-        sintoma_name: undefined,
-        descricao: undefined,
-        valor_inicial: undefined
+        sintoma_name: null,
+        descricao: null,
+        valor_inicial: null,
+        risco: null
     };
   },
   props: ["customer"],
   methods: {
     closeDialog() {
         this.dialog = false
+        this.paciente = false
+        this.sintoma = false
+        this.sintoma_name = null
+        this.descricao = null
+        this.valor_inicial = null
+        this.risco = null
     },
     postPaciente () {
       let data = this.customer
@@ -161,11 +181,20 @@ export default {
           }
       }
 
-      const url = `${API_HOST}:${API_PORT}/pre_classificacao/paciente`
+      if (this.risco === null) {
+        const url = `${API_HOST}:${API_PORT}/pre_classificacao/paciente`
         const response = axios.post(url, data)
         if (response == 0) {
             console.log("Error ao transferir dados do paciente!")
         }
+        return
+      }
+
+      const url = `${API_HOST}:${API_PORT}/pre_classificacao/paciente?risco=${this.risco}`
+      const response = axios.post(url, data)
+      if (response == 0) {
+          console.log("Error ao transferir dados do paciente!")
+      }
     },
     postSintoma () {
       const url = `${API_HOST}:${API_PORT}/pre_classificacao/sintoma?sintoma=${this.sintoma_name}&default=${this.valor_inicial}`
@@ -180,6 +209,7 @@ export default {
       } else {
         if (this.paciente) {
           this.postPaciente()
+          this.$emit("rowClick")
         }
         if (this.sintoma) {
           this.postSintoma()

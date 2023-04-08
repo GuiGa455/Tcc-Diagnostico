@@ -137,6 +137,8 @@ def get_pre_classificacao(
     
 @app.get("/pre_classificacao/paciente_default")
 def get_sintomas():
+    global df
+    df = pd.read_csv('./tables/TABELA_TCC.csv')
     lista_sintomas = list(df.columns)
     default = list(df.loc[0])
     paciente = {}
