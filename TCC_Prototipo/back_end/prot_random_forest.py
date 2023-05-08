@@ -10,7 +10,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import plot_tree
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import recall_score, precision_score, accuracy_score, f1_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.svm import SVC
 
 from data_model import dadosPaciente
 
@@ -39,6 +40,9 @@ df = pd.read_csv('./tables/TABELA_TCC.csv')
 rf = None
 y_test = None
 x_test = None
+x_train = None
+y_train = None
+previsoes = None
 
 def adicionar_paciente(data: dict, risco = None):
     if risco is None:
@@ -66,13 +70,19 @@ def gerar_arvore():
     global rf
     global y_test
     global x_test
+    global x_train
+    global y_train
+    global previsoes
 
     X_tr, X_ts, y_tr, y_ts = train_test_split(X,y, test_size=0.30, random_state=61658)
 
+    x_train = X_tr
+    y_train = y_tr
     x_test = X_ts
     y_test = y_ts
-    rf = RandomForestClassifier(max_depth=22, random_state=61658, n_estimators=10)
+    rf = RandomForestClassifier(max_depth=30, random_state=61658, n_estimators=10)
     rf.fit(X_tr, y_tr)
+    previsoes = rf.predict(x_test)
 
 def gerar_img():
     for x in range(len(rf.estimators_)):
@@ -101,9 +111,17 @@ def get_precisao():
     data = rf.predict(x_test)
     prec = {
         'accuracy_score': accuracy_score(y_test, data),
-        'f1_score': f1_score(y_test, data, average='macro')
+        'f1_score': f1_score(y_test, data, average='macro'),
+        'precision_score': precision_score(y_test, data, average='macro'),
+        'recall_score': recall_score(y_test, data, average='macro')
     }
     return prec
+
+def get_matrix():
+    cm = confusion_matrix(y_test, previsoes)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot()
+    plt.show()
 
 @app.put("/pre_classificacao/read")
 def get_pre_classificacao(data: dict):
@@ -170,6 +188,17 @@ def fornecer_precisao():
         if rf is None:
             gerar_arvore()
         precisao = get_precisao()
+        return precisao
+    except Exception as e:
+        return str(e)
+    
+@app.get("/pre_classificacao/gerar_matrix")
+def gerar_matrix():
+    try:
+        global rf
+        if rf is None:
+            gerar_arvore()
+        precisao = get_matrix()
         return precisao
     except Exception as e:
         return str(e)
