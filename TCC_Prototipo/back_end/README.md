@@ -1,4 +1,4 @@
-# API com aplicação CRUD
+# Procedimentos para ativar o backend
 
 ## Procedimentos de Instalação de Dependências
 

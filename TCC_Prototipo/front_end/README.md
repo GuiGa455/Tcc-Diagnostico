@@ -1,4 +1,4 @@
-# hello_world_2
+# Procedimentos para executar o frontend do software
 
 ## Project setup
 ```
