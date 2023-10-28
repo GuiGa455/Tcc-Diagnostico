@@ -37,6 +37,7 @@ app.add_middleware(
 model = {}
 
 df = pd.read_csv('./tables/TABELA_TCC.csv')
+dn = pd.read_csv('./tables/NOME_DOENCAS.csv')
 rf = None
 y_test = None
 x_test = None
@@ -62,6 +63,12 @@ def adicionar_sintoma(sintoma:str, default):
 
     df.insert(0, sintoma.upper(), default)
     df.to_csv('./tables/TABELA_TCC.csv', index=False)
+    return 1
+
+def adicionar_descricao(sintoma, nomecompleto, description):
+    dn.insert(0, sintoma.upper(), None)
+    dn[sintoma.upper()] = [nomecompleto, description]
+    dn.to_csv('./tables/NOME_DOENCAS.csv', index=False)
     return 1
 
 def gerar_arvore():
@@ -200,5 +207,40 @@ def gerar_matrix():
             gerar_arvore()
         precisao = get_matrix()
         return precisao
+    except Exception as e:
+        return str(e)
+
+@app.get("/pre_classificacao/nome_descricao_sintoma")
+def get_name_description():
+    global dn
+    dn = pd.read_csv('./tables/NOME_DOENCAS.csv')
+    lista_de_doencas = list(dn.columns)
+    lista_de_colunas = [dn[col].tolist() for col in dn.columns]
+    colunas = dn.columns.tolist()
+    data = {}
+    for i in range(len(lista_de_colunas)):
+        data [colunas[i]] = lista_de_colunas[i]
+    return data
+
+@app.post("/pre_classificacao/post_csv_transposto")
+def post_csv_transposto():
+    # Carregue o arquivo CSV original
+    df = pd.read_csv('./tables/NOME_DOENCAS.csv')
+    # Transponha o DataFrame (linhas se tornam colunas e colunas se tornam linhas)
+    df_transposto = df.transpose()
+    # Salve o DataFrame transposto em um novo arquivo CSV
+    df_transposto.to_csv('./tables/NOME_DOENCAS2.csv', index=False)
+
+@app.post("/pre_classificacao/descricao")
+def get_pre_classificacao(
+    sintoma: str, nomecompleto: str, description: str, default: Union[int, bool]
+):
+    try:
+        global rf
+        if rf is None:
+            gerar_arvore()
+        status = adicionar_sintoma(sintoma, default)
+        status = adicionar_descricao(sintoma, nomecompleto, description)
+        return status
     except Exception as e:
         return str(e)
