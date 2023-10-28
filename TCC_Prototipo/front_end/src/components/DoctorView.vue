@@ -18,7 +18,7 @@
       content-class="gray-border rounded-xl elevation-24"
       persistent
     >
-      <v-card style="padding: 15px; background-color: BlueViolet">
+      <v-card style="padding: 15px; background-color: White">
         <div class="d-flex flex-column">
           <div class="d-flex">
             <v-card-title
@@ -127,6 +127,7 @@
           <div class="mt-10 d-flex justify-center">
             <v-btn
               @click="updateData()"
+              color = "orange"
             >
               SAVE
             </v-btn>
