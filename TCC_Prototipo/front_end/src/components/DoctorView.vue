@@ -92,10 +92,21 @@
           <div v-if="sintoma">
             <div class="mt-5 d-flex justify-center">
               <v-text-field 
-                v-model="sintoma_name"
+                v-model="nome_completo"
                 color="white" 
                 bg-color="white"
                 label="Sintoma"
+                variant="underlined"
+              >
+              </v-text-field>
+            </div>
+
+            <div class="d-flex justify-center">
+              <v-text-field 
+                v-model="sintoma_name"
+                color="white" 
+                bg-color="white"
+                label="Sigla"
                 variant="underlined"
               >
               </v-text-field>
@@ -156,7 +167,8 @@ export default {
         sintoma_name: null,
         descricao: null,
         valor_inicial: null,
-        risco: null
+        risco: null,
+        nome_completo: null
     };
   },
   props: ["customer"],
@@ -169,6 +181,7 @@ export default {
         this.descricao = null
         this.valor_inicial = null
         this.risco = null
+        this.nome_completo = null
     },
     postPaciente () {
       let data = this.customer
@@ -198,7 +211,7 @@ export default {
       }
     },
     postSintoma () {
-      const url = `${API_HOST}:${API_PORT}/pre_classificacao/sintoma?sintoma=${this.sintoma_name}&default=${this.valor_inicial}`
+      const url = `${API_HOST}:${API_PORT}/pre_classificacao/descricao?sintoma=${this.sintoma_name}&default=${this.valor_inicial}&nomecompleto=${this.nome_completo}&description=${this.descricao}`
         const response = axios.post(url)
         if (response == 0) {
             console.log("Error ao transferir dados do paciente!")
