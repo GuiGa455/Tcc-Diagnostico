@@ -14,7 +14,7 @@
 
     <v-dialog
       v-model="dialog"
-      width="450"
+      width="490"
       content-class="gray-border rounded-xl elevation-24"
       persistent
     >
@@ -58,14 +58,17 @@
 
           <div v-if="paciente">
             <div class="mt-5 d-flex justify-center">
-              <v-text-field 
+              <v-btn-toggle
                 v-model="risco"
-                color="white" 
-                bg-color="white"
-                label="Informe aqui o risco adequado"
-                variant="underlined"
+                divided
+                variant="outlined"
               >
-              </v-text-field>
+                <v-btn :value="1">Vermelho</v-btn> 
+                <v-btn :value="2">Laranja</v-btn>
+                <v-btn :value="3">Amarelo</v-btn>
+                <v-btn :value="4">Verde</v-btn>
+                <v-btn :value="5">Azul</v-btn>
+              </v-btn-toggle>
             </div>
           </div>
 
