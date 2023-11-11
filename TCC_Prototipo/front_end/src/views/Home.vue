@@ -199,7 +199,12 @@
           <v-form>
             <div v-if="((customizations[key] !== false) && (customizations[key] !== true)) && ((customizations[key] !== 0) && (customizations[key] !== 1))">
             <br>
-                {{ key }}
+                <strong>
+                  {{ description[key][0] }}
+                </strong>
+            <br>
+            {{ description[key][1] }}
+            <br>
             <br>
             <textarea
               v-model="customizations[key]"
@@ -216,12 +221,16 @@
             </div>
             <div v-else>
             <v-switch
+                class="bold-label"
                 :v-model="customizations[key]"
-                :label="key"
+                :label="description[key][0]"
                 color="orange darken-3"
                 hide-details
                 @click="getData(customizations[key], key)"
             ></v-switch>
+            <div>
+              {{ description[key][1] }}
+            </div>
             </div>
           </v-form>
       </v-card-text>
@@ -244,6 +253,7 @@ export default {
   mounted () {
     this.putClassificacao()
     this.getPacienteDefault()
+    this.getNomeDescricaoSintoma()
   },
   data () {
     return {
@@ -255,7 +265,8 @@ export default {
         errorMsg: '',
         isProdEnvironment: 0,
         customizations: {},
-        risco: undefined
+        risco: undefined,
+        description: {}
     }
   },
   methods: {
@@ -313,6 +324,13 @@ export default {
         }
         this.customizations = data
     },
+
+    async getNomeDescricaoSintoma () {
+        const url = `${API_HOST}:${API_PORT}/pre_classificacao/nome_descricao_sintoma`
+        const response = await axios.get(url)
+        this.description = response.data
+    },
+
     putClassificacaoFig () {
         const url = `${API_HOST}:${API_PORT}/pre_classificacao/gerar_fig`
         const response = axios.put(url)
@@ -333,5 +351,8 @@ export default {
   }
   .title2 {
     color: black;
+  }
+  .bold-label{
+    font-weight: bold;
   }
 </style>
